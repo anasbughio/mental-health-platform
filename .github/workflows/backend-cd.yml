@@ -45,12 +45,12 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: mental-health-backend
         run: |
-          # 1. Dynamically find the EC2 Instance ID
-          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=mentalhealth-dev-backend-ec2" "Name=instance-state-name,Values=running" --query "Reservations[0].Instances[0].InstanceId" --output text)
+          # 1. Dynamically find the NEWEST running EC2 Instance ID
+          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=mentalhealth-dev-backend-ec2" "Name=instance-state-name,Values=running" --query "sort_by(Reservations[].Instances[], &LaunchTime)[-1].InstanceId" --output text)
           
           echo "Deploying to EC2 Instance: $INSTANCE_ID"
 
-          # 2. Send the chained commands to the server (Safely formatted for AWS CLI)
+          # 2. Send the chained commands to the server
           aws ssm send-command \
             --instance-ids "$INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
