@@ -1,0 +1,64 @@
+name: Backend Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+    # Only run this if files in the backend folder change
+    paths:
+      - 'apps/backend/**'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: mental-health-backend
+          # Tags the image with the unique Git commit ID
+          IMAGE_TAG: ${{ github.sha }} 
+        working-directory: ./apps/backend
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      
+      - name: Deploy to EC2 via AWS Systems Manager (SSM)
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: mental-health-backend
+        run: |
+          # 1. Dynamically find the EC2 Instance ID using its tag name
+          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=mentalhealth-dev-backend-ec2" "Name=instance-state-name,Values=running" --query "Reservations[0].Instances[0].InstanceId" --output text)
+          
+          echo "Deploying to EC2 Instance: $INSTANCE_ID"
+
+          # 2. Send the command to the server to pull and restart Docker
+          aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands=[ \
+              "aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY", \
+              "sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest", \
+              "sudo docker stop backend-api || true", \
+              "sudo docker rm backend-api || true", \
+              "sudo docker run -d --name backend-api --restart always -p 80:3000 $ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+            ] \
+            --comment "Deploying latest Node.js backend"
