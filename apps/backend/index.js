@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
-
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 // We map port 3000 to port 80 in our GitHub Actions SSM command
+dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -19,6 +21,12 @@ app.get('/api/health', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
+
+mongoose.connect(process.env.MONGO_URI).then(() => {
+    console.log('Connected to MongoDB');
+}   ).catch((err) => {  
+    console.error('Error connecting to MongoDB:', err);
+}); 
 
 app.listen(PORT, () => {
     console.log(`Server is listening  on port ${PORT}`);

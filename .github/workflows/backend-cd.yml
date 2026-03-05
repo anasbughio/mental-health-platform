@@ -50,9 +50,9 @@ jobs:
           
           echo "Deploying to EC2 Instance: $INSTANCE_ID"
 
-          # 2. Send the chained commands to the server
+          # 2. Send the chained commands to the server (Now with MONGO_URI injected!)
           aws ssm send-command \
             --instance-ids "$INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands=["aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 $ECR_REGISTRY/$ECR_REPOSITORY:latest"] \
+            --parameters commands=["aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI='${{ secrets.MONGO_URI }}' $ECR_REGISTRY/$ECR_REPOSITORY:latest"] \
             --comment "Deploying latest Node.js backend"
