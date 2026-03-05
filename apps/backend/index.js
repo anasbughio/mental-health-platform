@@ -19,6 +19,7 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({
         status: 'success',
         message: 'The containerized API is live and responding!',
+        database: dbStatus,
         timestamp: new Date().toISOString()
     });
 });
