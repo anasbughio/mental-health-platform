@@ -44,15 +44,23 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: mental-health-backend
+          # Safely pull the secret into the environment first
+          MONGO_URI: ${{ secrets.MONGO_URI }} 
         run: |
           # 1. Dynamically find the NEWEST running EC2 Instance ID
           INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=mentalhealth-dev-backend-ec2" "Name=instance-state-name,Values=running" --query "sort_by(Reservations[].Instances[], &LaunchTime)[-1].InstanceId" --output text)
           
           echo "Deploying to EC2 Instance: $INSTANCE_ID"
 
-          # 2. Send the chained commands to the server (Now with MONGO_URI injected!)
+          # 2. Define the exact bash script for the server
+          SCRIPT_COMMAND="aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI=\"$MONGO_URI\" $ECR_REGISTRY/$ECR_REPOSITORY:latest"
+          
+          # 3. Use 'jq' to safely convert the script into an AWS-friendly JSON parameter payload
+          PARAMETERS=$(jq -n --arg cmd "$SCRIPT_COMMAND" '{"commands":[$cmd]}')
+
+          # 4. Send the command using the safe JSON payload
           aws ssm send-command \
             --instance-ids "$INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands=["aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI='${{ secrets.MONGO_URI }}' $ECR_REGISTRY/$ECR_REPOSITORY:latest"] \
+            --parameters "$PARAMETERS" \
             --comment "Deploying latest Node.js backend"
