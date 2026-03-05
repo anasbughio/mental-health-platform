@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 
 // Standard DevOps Health Check Route
 app.get('/api/health', (req, res) => {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.status(200).json({
         status: 'success',
         message: 'The containerized API is live and responding!',
