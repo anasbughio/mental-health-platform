@@ -33,19 +33,12 @@ const UserSchema  = new mongoose.Schema({
 
 },{timestamps:true});
 
-// The Pre-Save Hook: Encrypt password before saving
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function() {
     // Only hash if the password was just created or modified
-    if (!this.isModified('password')) return next();
+    if (!this.isModified('password')) return;
     
-    try {
-        // Generate a secure "salt" and scramble the password
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (error) {
-        next(error);
-    }
+    // Generate a secure "salt" and scramble the password
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
-
 module.exports = mongoose.model('User',UserSchema);

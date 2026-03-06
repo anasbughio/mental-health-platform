@@ -1,8 +1,10 @@
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
-exports.createUser = async (req,res) => {
+const bcrypt = require('bcryptjs'); // MUST be bcryptjs
 
-try {
+exports.createUser = async (req, res) => {
+   
+    
+    try {
         const { name, email, password, role } = req.body;
         
         // 1. Check if a user with this email already exists
@@ -28,10 +30,10 @@ try {
             data: savedUser
         });
     } catch (error) {
+        console.error('[DEBUG] Error in controller:', error.message);
         res.status(400).json({
             status: 'fail',
             message: error.message
         });
     }
-
 }

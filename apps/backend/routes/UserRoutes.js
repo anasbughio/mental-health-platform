@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {createUser} = require('../controllers/UserController')
+const { createUser } = require('../controllers/UserController');
 
-router.post('/register',createUser);
 
+
+// The route MUST have the leading slash: '/register'
+router.post('/register', createUser);
 
 module.exports = router;
