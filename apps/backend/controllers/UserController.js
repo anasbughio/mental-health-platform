@@ -2,26 +2,36 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 exports.createUser = async (req,res) => {
 
- const {name,email,password,role} = req.body;
+try {
+        const { name, email, password, role } = req.body;
+        
+        // 1. Check if a user with this email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ 
+                status: 'fail', 
+                message: 'A user with this email already exists' 
+            });
+        }
 
- try{
-    const existingUser =  await User.findOne({email});
-    if(existingUser)   res.status(400).json({status:'error',message:'Email already in use'});
-
-    const hashedPassword = await bcrypt.hash(password,10);
-
-    const newUser  = await User.create({
-        name,
-        email,
-        password:hashedPassword,
-        role,
-    });
-
-    res.status(201).json({status:'success',data:{user:newUser}});
-   
- }catch(err){
-    console.error('Error creating user:', err);
-    res.status(500).json({status:'error',message:'Server error while creating user'});
- }
+        // 2. Create the new user (the pre-save hook will hash the password here)
+        const newUser = new User({ name, email, password, role });
+        const savedUser = await newUser.save();
+        
+        // 3. Remove the hashed password from the response object for security
+        savedUser.password = undefined;
+        
+        // 4. Send success response
+        res.status(201).json({
+            status: 'success',
+            message: 'User registered securely!',
+            data: savedUser
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 'fail',
+            message: error.message
+        });
+    }
 
 }
