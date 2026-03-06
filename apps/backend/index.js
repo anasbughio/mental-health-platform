@@ -1,4 +1,5 @@
 const express = require('express');
+const userRoutes = require('./routes/UserRoutes');
 const app = express();
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
     res.send('Mental Health Platform API is running. Access /api/health for status.');
 });
 
+app.post('/api/auth',userRoutes);
 // Standard DevOps Health Check Route
 app.get('/api/health', (req, res) => {
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
