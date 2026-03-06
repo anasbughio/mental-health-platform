@@ -15,7 +15,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/auth',userRoutes);
-// Standard DevOps Health Check Route
+
+// Standard DevOps Health Check Route 
 app.get('/api/health', (req, res) => {
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.status(200).json({
