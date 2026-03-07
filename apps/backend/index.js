@@ -20,5 +20,5 @@ app.use('/api/moods',require('./routes/MoodRoutes'));
 app.use('/api/auth',userRoutes);
 connectDB();
 app.listen(PORT, () => {
-    console.log(`Server is listening  on  port ${PORT}`);
+    console.log(`Server is listening   port ${PORT}`);
 });
