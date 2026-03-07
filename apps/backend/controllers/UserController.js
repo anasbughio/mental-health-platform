@@ -1,6 +1,11 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs'); // MUST be bcryptjs
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
+    
+
+dotenv.config();
 exports.createUser = async (req, res) => {
    
     
@@ -38,12 +43,86 @@ exports.createUser = async (req, res) => {
     }
 }
 
+exports.loginUser =  async (req,res) =>{
 
-exports.seeUser = async (req, res) => {
-   
-   await User.find().then((users) => {
-        res.status(200).json(users);
-    }).catch((err) => {
-        res.status(400).json({message: err.message});
+   try{
+      const {email,password} = req.body;
+
+      // 1. Find the user by email
+      const user =  await  User.findOne({email});
+
+      if(!user) {
+        return res.status(400).json({
+            status:'fail',
+            message:'Invalid email or password'
+        });
+      }
+      // 2. Check if the provided password matches the user's hashed password
+      const isMatch = await bcrypt.compare(password,user.password);
+
+      
+
+      if(!isMatch){  
+         return res.status(400).json({ 
+            status:'fail',
+            message:'Invalid email or password'
+         });
+      }
+      
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' }); 
+    
+    // Refresh Token (long life)
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+      // store refresh token in cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
+      res.cookie("token",token,{
+            httpOnly:true,
+            secure:false,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite:"strict"
+      })
+
+   // 3. If everything is valid, send a success response (token generation can be added here later)
+      res.status(200).json({
+        status:'success',
+        message:'Login successful',
+        data: {
+            userId: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: token
+        }
+      });         
+
+
+
+   }catch(error){
+    console.error('[DEBUG] Error in login controller:', error.message);
+    console.log('[DEBUG] Request body:', req.body);
+    res.status(400).json({
+        status:'fail',
+        message:error.message
+    });
+   } 
 }
+
+
+exports.logout = async (req,res) => {
+res.clearCookie("token");
+res.json({
+    success: true,
+    message: "Logged out successfully",
+  });
+}
+
