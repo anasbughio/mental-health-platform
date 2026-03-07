@@ -55,7 +55,7 @@ jobs:
           echo "Deploying to EC2 Instance: $INSTANCE_ID"
 
           # 2. Define the exact bash script for the server
-          SCRIPT_COMMAND="aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI="$MONGO_URI" -e JWT_SECRET="$JWT_SECRET" -e JWT_REFRESH_SECRET="$JWT_REFRESH_SECRET" $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          SCRIPT_COMMAND="aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI=\"$MONGO_URI\" $ECR_REGISTRY/$ECR_REPOSITORY:latest"
           
           # 3. Use 'jq' to safely convert the script into an AWS-friendly JSON parameter payload
           PARAMETERS=$(jq -n --arg cmd "$SCRIPT_COMMAND" '{"commands":[$cmd]}')
