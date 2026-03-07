@@ -41,27 +41,28 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
       
       - name: Deploy to EC2 via AWS Systems Manager (SSM)
-  env:
-    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-    ECR_REPOSITORY: mental-health-backend
-    MONGO_URI: ${{ secrets.MONGO_URI }}
-    JWT_SECRET: ${{ secrets.JWT_SECRET }}
-    JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
-  run: |
-    # 1. Dynamically find the newest running EC2 instance
-    INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=mentalhealth-dev-backend-ec2" "Name=instance-state-name,Values=running" --query "sort_by(Reservations[].Instances[], &LaunchTime)[-1].InstanceId" --output text)
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: mental-health-backend
+          # Safely pull the secret into the environment first
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+        run: |
+          # 1. Dynamically find the NEWEST running EC2 Instance ID
+          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=mentalhealth-dev-backend-ec2" "Name=instance-state-name,Values=running" --query "sort_by(Reservations[].Instances[], &LaunchTime)[-1].InstanceId" --output text)
+          
+          echo "Deploying to EC2 Instance: $INSTANCE_ID"
 
-    echo "Deploying to EC2 Instance: $INSTANCE_ID"
+          # 2. Define the exact bash script for the server
+          SCRIPT_COMMAND="aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI="$MONGO_URI" -e JWT_SECRET="$JWT_SECRET" -e JWT_REFRESH_SECRET="$JWT_REFRESH_SECRET" $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          
+          # 3. Use 'jq' to safely convert the script into an AWS-friendly JSON parameter payload
+          PARAMETERS=$(jq -n --arg cmd "$SCRIPT_COMMAND" '{"commands":[$cmd]}')
 
-    # 2. Define the deployment command (one-line docker run)
-    SCRIPT_COMMAND="aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && sudo docker stop backend-api || true && sudo docker rm backend-api || true && sudo docker run -d --name backend-api --restart always -p 80:3000 -e MONGO_URI=\"$MONGO_URI\" -e JWT_SECRET=\"$JWT_SECRET\" -e JWT_REFRESH_SECRET=\"$JWT_REFRESH_SECRET\" $ECR_REGISTRY/$ECR_REPOSITORY:latest"
-
-    # 3. Convert the command into JSON payload for SSM
-    PARAMETERS=$(jq -n --arg cmd "$SCRIPT_COMMAND" '{"commands":[$cmd]}')
-
-    # 4. Send the command to EC2 via SSM
-    aws ssm send-command \
-      --instance-ids "$INSTANCE_ID" \
-      --document-name "AWS-RunShellScript" \
-      --parameters "$PARAMETERS" \
-      --comment "Deploying latest Node.js backend"
+          # 4. Send the command using the safe JSON payload
+          aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters "$PARAMETERS" \
+            --comment "Deploying latest Node.js backend"
