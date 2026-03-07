@@ -58,7 +58,7 @@ jobs:
           SCRIPT_COMMAND="aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY && \
           sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest && \
           sudo docker stop backend-api || true && sudo docker rm backend-api || true && \
-          sudo docker run -d --name backend-api --restart always -p 80:3000 \
+          sudo docker run -d --name backend-api --restart always -p 3000:3000 \
           -e MONGO_URI=\"$MONGO_URI\" \
           -e JWT_SECRET=\"$JWT_SECRET\" \
           -e JWT_REFRESH_SECRET=\"$JWT_REFRESH_SECRET\" \
