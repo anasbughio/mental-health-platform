@@ -4,13 +4,16 @@ const express = require('express');
 const userRoutes = require('./routes/UserRoutes');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
-
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cookieParser());
 app.use(express.json());
-
+app.use(cors({
+  origin: "http://localhost:5173", // frontend URL during development
+  credentials: true // <-- important to allow cookies
+}));
 // Root route
 app.get('/', (req, res) => {
     res.send('Mental Health Platform API is running. Access /api/health for status.');
