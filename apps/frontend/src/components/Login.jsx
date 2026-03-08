@@ -7,31 +7,25 @@ const Login = () => {
     const [error, setError] = useState("");
      const navigate = useNavigate();
 
-     const handleSubmit = async (e) =>{
-        e.preventDefault();
-        setError("");
-        try{
-            const res = await api.post('/auth/login', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // <- important for cookies
-        body: JSON.stringify({ email, password }),
-      });
-       const data = await res.json();
-         if (!res.ok) {
-        setError(data.message || "Login failed");
-        return;
-      }
+    const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-      // Login successful, redirect to dashboard
-      navigate("/dashboard");
-        }catch(error){
-            setError(error.response?.data?.message || "An error occurred during login");
-        }
+  try {
+    const res = await api.post("/auth/login", {
+      email: email,
+      password: password,
+    });
 
-     }
+    console.log(res.data);
+
+    // redirect after login
+    navigate("/dashboard");
+
+  } catch (error) {
+    setError(error.response?.data?.message || "Login failed");
+  }
+};
 
     return (
          <div style={{ maxWidth: "400px", margin: "50px auto" }}>

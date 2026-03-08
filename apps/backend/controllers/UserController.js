@@ -81,15 +81,15 @@ exports.loginUser =  async (req,res) =>{
       // store refresh token in cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
       res.cookie("token",token,{
             httpOnly:true,
-            secure:false,
+            secure:truncates,
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite:"strict"
+            sameSite:"none"
       })
 
    // 3. If everything is valid, send a success response (token generation can be added here later)
