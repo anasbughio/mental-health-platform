@@ -46,6 +46,8 @@ exports.createUser = async (req, res) => {
 exports.loginUser =  async (req,res) =>{
 
    try{
+
+    console.log("BODY:", req.body);
       const {email,password} = req.body;
 
       // 1. Find the user by email
