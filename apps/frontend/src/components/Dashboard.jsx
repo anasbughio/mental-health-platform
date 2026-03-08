@@ -71,7 +71,7 @@ export default function Dashboard() {
             {error && <div style={{ color: 'red', marginBottom: '15px', padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>{error}</div>}
 
             {/* Form to submit a new log */}
-            <form onSubmit={hacndleSubmit} style={{ border: '1px solid #ddd', padding: '20px', marginBottom: '30px', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
+            <form onSubmit={handleSubmit} style={{ border: '1px solid #ddd', padding: '20px', marginBottom: '30px', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
                 <h3 style={{ marginTop: 0 }}>How are you feeling today?</h3>
                 
                 <div style={{ marginBottom: '15px' }}>
