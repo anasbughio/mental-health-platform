@@ -45,6 +45,7 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           # 1. Find the newest running EC2 instance
           INSTANCE_ID=$(aws ec2 describe-instances \
@@ -62,6 +63,7 @@ jobs:
           -e MONGO_URI=\"$MONGO_URI\" \
           -e JWT_SECRET=\"$JWT_SECRET\" \
           -e JWT_REFRESH_SECRET=\"$JWT_REFRESH_SECRET\" \
+          -e GEMINI_API_KEY=\"$GEMINI_API_KEY\" \
           $ECR_REGISTRY/$ECR_REPOSITORY:latest"
 
           # 3. Convert command to JSON payload for SSM

@@ -21,6 +21,10 @@ const MoodeLogSchema = new mongoose.Schema({
         trim:true,
         maxlength:500,
     },
+    aiAdvice: {
+        type: String,
+        default: null
+    },
 
     emotions:[String]
 
