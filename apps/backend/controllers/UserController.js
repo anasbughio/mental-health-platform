@@ -49,9 +49,9 @@ exports.loginUser =  async (req,res) =>{
 
     console.log("BODY:", req.body);
       const {email,password} = req.body;
-
+    const emailTrim = email.trim();
       // 1. Find the user by email
-      const user =  await  User.findOne({email});
+      const user =  await  User.findOne({email:emailTrim});
 
       if(!user) {
         return res.status(400).json({
