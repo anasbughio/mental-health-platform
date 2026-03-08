@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../config/axios';
 
 const EMOTION_TAGS = ['Happy', 'Anxious', 'Calm', 'Overwhelmed', 'Productive', 'Exhausted'];
 
