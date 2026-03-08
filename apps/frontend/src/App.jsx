@@ -1,9 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
 
-function Dashboard() {
-  return <h1>Dashboard (coming soon!)</h1>;
-}
 
 function App() {
   return (

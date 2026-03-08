@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:5173", // frontend URL during development
+  origin: ["https://d1b25710g4zbqm.cloudfront.net","http://localhost:5173" ],// frontend URL during development
   credentials: true // <-- important to allow cookies
 }));
 // Root route

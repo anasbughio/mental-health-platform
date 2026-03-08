@@ -22,12 +22,9 @@ const MoodeLogSchema = new mongoose.Schema({
         maxlength:500,
     },
 
-    emotions:[{
-        type:String,
-
-    }]
+    emotions:[String]
 
 
-},{timeStamps:true});
+},{timestamps:true});
 
 module.exports = mongoose.model('MoodLog',MoodeLogSchema);
