@@ -52,3 +52,25 @@ Validate their exact feelings and offer one small, actionable piece of advice or
         });
     }
 };
+
+
+// 2. Get all Mood Logs for the logged-in user
+exports.getMyMoodLogs = async (req, res) => {
+    try {
+        // Find all logs where the 'user' field matches the logged-in user's ID
+        // .sort({ createdAt: -1 }) puts the newest logs at the top
+        const logs = await MoodLog.find({ user: req.user.id }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            status: 'success',
+            results: logs.length,
+            data: logs
+        });
+    } catch (error) {
+        console.error('[DEBUG] Error fetching mood logs:', error.message);
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal server error'
+        });
+    }
+};

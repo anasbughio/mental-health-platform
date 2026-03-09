@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {authMiddleware} = require('../middleware/auth');
-const {createMoodLog, getMyMoodLogs} = require('../controllers/MoodLogController');
-const {createMood} = require('../controllers/moodController');
+const {createMood,getMyMoodLogs} = require('../controllers/moodController');
 
 
 router.post('/',authMiddleware,createMood);
