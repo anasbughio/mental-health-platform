@@ -77,6 +77,9 @@ export default function Dashboard() {
          <Link to="/chat" style={{ marginRight: '15px', textDecoration: 'none', color: '#007BFF', fontWeight: 'bold' }}>
             Talk to AI. &rarr;
         </Link>
+         <Link to="/chat" style={{ marginRight: '15px', textDecoration: 'none', color: '#007BFF', fontWeight: 'bold' }}>
+            Talk to AI. &rarr;
+        </Link>
       
         
        
