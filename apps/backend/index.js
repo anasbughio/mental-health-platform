@@ -25,5 +25,5 @@ app.use('/api/auth',userRoutes);
 app.use('/api/chat', chatRoutes); 
 connectDB();
 app.listen(PORT, () => {
-    console.log(`Server is listening on  port ${PORT}`);
+    console.log(`Server is listening  port ${PORT}`);
 });

@@ -77,10 +77,7 @@ export default function Dashboard() {
          <Link to="/chat" style={{ marginRight: '15px', textDecoration: 'none', color: '#007BFF', fontWeight: 'bold' }}>
             Talk to AI. &rarr;
         </Link>
-        <a href="/chat" style={{ marginRight: '15px', textDecoration: 'none', color: '#007BFF', fontWeight: 'bold' }}>
-            Talk to AI. &rarr;
-        </a>
-            Talk to AI. &rarr;
+      
         
        
                 <button onClick={handleLogout} style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}>
