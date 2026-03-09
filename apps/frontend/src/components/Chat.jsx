@@ -3,16 +3,33 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../config/axios';
 
 export default function Chat() {
-    // Start with a friendly initial greeting
-    const [messages, setMessages] = useState([
-        { text: "Hi there. I'm your AI companion. How are you feeling right now?", isUser: false }
-    ]);
+     const [messages, setMessages] = useState([INITIAL_GREETING]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
     const navigate = useNavigate();
 
-    // Automatically scroll to the bottom when a new message appears
+    // Load persisted chat history on mount
+    useEffect(() => {
+        const loadHistory = async () => {
+            try {
+                const response = await api.get('/chat/history');
+                const dbMessages = response.data.data;
+                if (dbMessages.length > 0) {
+                    // Convert DB format to UI format
+                    const uiMessages = dbMessages.map(msg => ({
+                        text: msg.text,
+                        isUser: msg.role === 'user'
+                    }));
+                    setMessages([INITIAL_GREETING, ...uiMessages]);
+                }
+            } catch (err) {
+                if (err.response?.status === 401) navigate('/login');
+            }
+        };
+        loadHistory();
+    }, []);
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -22,35 +39,20 @@ export default function Chat() {
         if (!input.trim()) return;
 
         const userText = input;
-        setInput(''); // Clear the input box immediately
-        
-        // Add the user's message to the UI
+        setInput('');
         setMessages(prev => [...prev, { text: userText, isUser: true }]);
         setIsLoading(true);
 
         try {
-            // Format the past conversation history exactly how Gemini expects it
-            // We skip the very first greeting so we don't confuse the AI
-            const formattedHistory = messages.slice(1).map(msg => ({
-                role: msg.isUser ? "user" : "model",
-                parts: [{ text: msg.text }]
-            }));
-
-            // Send the new message AND the formatted history to your AWS backend
-            const response = await api.post('/chat', {
-                message: userText,
-                history: formattedHistory
-            });
-
-            // Add the AI's reply to the UI
+            // Now we only send the new message — history is managed server-side
+            const response = await api.post('/chat', { message: userText });
             setMessages(prev => [...prev, { text: response.data.reply, isUser: false }]);
-            
         } catch (err) {
             console.error(err);
             if (err.response?.status === 401) {
                 navigate('/login');
             } else {
-                setMessages(prev => [...prev, { text: "Sorry, I'm having trouble connecting to the server right now.", isUser: false }]);
+                setMessages(prev => [...prev, { text: "Sorry, I'm having trouble connecting right now.", isUser: false }]);
             }
         } finally {
             setIsLoading(false);
