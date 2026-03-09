@@ -12,6 +12,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );

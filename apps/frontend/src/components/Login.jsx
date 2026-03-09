@@ -56,11 +56,13 @@ const Login = () => {
           Log In
         </button>
       </form>
+      <Link to="/register" style={{ display: "block", marginTop: "15px", textDecoration: "none", color: "#007BFF" }}>
+        Don't have an account? Register here.
+      </Link>
     </div>
     );
-
-
 }
+   
 
 
 export default Login;
