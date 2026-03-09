@@ -7,7 +7,7 @@ const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('user');
+    // const [role, setRole] = useState('user');
     const [error, setError] = useState("");
      const navigate = useNavigate();  
      
@@ -18,8 +18,7 @@ const Register = () => {
     const res = await api.post("/auth/register", {
       name: name,
       email: email,
-      password: password,
-      role: role
+      password: password
     }); 
     console.log(res.data);
 
@@ -66,14 +65,14 @@ const Register = () => {
                     />
 
                 </div>
-                <div style={{ marginBottom: '15px' }}>
+                {/* <div style={{ marginBottom: '15px' }}>
                     <label>Role:</label>
                     <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '8px' }}>
                         <option value="patient">Patient</option>
                         <option value="admin">Admin</option>
                             <option value="provider">Provider</option>
                     </select>
-                </div>
+                </div> */}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit" style={{ padding: '10px 20px' }}>
                     Register
