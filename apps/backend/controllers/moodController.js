@@ -1,5 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const Mood = require('../models/Mood'); // Adjust the path to your Mood model if needed
+const Mood = require('../models/MoodLog'); // Adjust the path to your Mood model if needed
 
 // Initialize the AI securely using the environment variable your pipeline just injected
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
