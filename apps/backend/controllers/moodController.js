@@ -13,7 +13,7 @@ exports.createMood = async (req, res) => {
         // Only spend compute power asking the AI if the user actually wrote a note
         if (notes && notes.trim() !== '') {
             // We use the fast, lightweight model for quick responses
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
             // Prompt Engineering: Telling the AI exactly how to behave
            // 2. Inject that context into the prompt!
