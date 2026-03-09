@@ -4,6 +4,7 @@ const express = require('express');
 const userRoutes = require('./routes/UserRoutes');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
+const chatRoutes = require('./routes/chatRoutes');
 const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/moods',require('./routes/MoodRoutes'));
 app.use('/api/auth',userRoutes);
+app.use('/api/chat', chatRoutes); 
 connectDB();
 app.listen(PORT, () => {
     console.log(`Server is listening on  port ${PORT}`);
