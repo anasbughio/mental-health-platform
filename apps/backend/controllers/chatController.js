@@ -1,6 +1,6 @@
 // controllers/chatController.js
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const ChatHistory = require('../models/ChatHistory');
+const ChatHistory = require('../models/Chat'); // Adjust the path to your Chat model if needed
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
