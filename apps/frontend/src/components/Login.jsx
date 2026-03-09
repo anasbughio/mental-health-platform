@@ -20,7 +20,7 @@ const Login = () => {
     console.log(res.data);
 
     // redirect after login
-    navigate("/dashboard");
+    navigate("/chat");
 
   } catch (error) {
     setError(error.response?.data?.message || "Login failed");
