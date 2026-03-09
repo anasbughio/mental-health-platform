@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
+import Register from "./components/Register";
 
 
 function App() {
