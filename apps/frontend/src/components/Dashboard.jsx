@@ -73,10 +73,11 @@ export default function Dashboard() {
     return (
         <div style={{ maxWidth: '600px', margin: '50px auto', fontFamily: 'sans-serif' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>Your AI Mood Dashboard</h2>
+             <h2>Your AI Mood Dashboard</h2>
             <Link to="/chat" style={{ marginRight: '15px', textDecoration: 'none', color: '#007BFF', fontWeight: 'bold' }}>
-            Talk to AI &rarr;
+            Talk to AI. &rarr;
         </Link>
+       
                 <button onClick={handleLogout} style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}>
                     Logout
                 </button>
