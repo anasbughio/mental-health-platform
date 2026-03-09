@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../config/axios';
+const INITIAL_GREETING = { text: "Hi there. I'm your AI companion. How are you feeling right now?", isUser: false };
 
 export default function Chat() {
      const [messages, setMessages] = useState([INITIAL_GREETING]);
