@@ -5,6 +5,7 @@ import Chat from "./components/Chat";
 import Register from "./components/Register";
 import Journal from "./components/Journal";
 import Goals from "./components/Goals";
+import CrisisResources from "./components/Crisisresorces";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/goals" element={<Goals />} />
+        <Route path="/crisis" element={<CrisisResources />} />
       </Routes>
     </Router>
   );
