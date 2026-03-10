@@ -24,6 +24,7 @@ app.use('/api/moods',require('./routes/MoodRoutes'));
 app.use('/api/auth',userRoutes);
 app.use('/api/chat', chatRoutes); 
 app.use('/api/journal', require('./routes/JournalRoutes'));
+app.use('/api/goals', require('./routes/GoalRoutes'));
 connectDB();
 app.listen(PORT, () => {
     console.log(`Server is listening  port ${PORT}`);

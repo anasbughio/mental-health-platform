@@ -350,6 +350,7 @@ export default function Dashboard() {
                 <div style={styles.headerRight}>
                     <Link to="/chat" style={styles.chatLink}>Talk to AI →</Link>
                     <Link to="/journal" style={styles.journalLink}>📔 Journal →</Link>
+                    <Link to="/goals">🎯 Goals →</Link>
                     <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
                 </div>
             </div>

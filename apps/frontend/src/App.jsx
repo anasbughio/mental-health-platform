@@ -4,6 +4,7 @@ import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
 import Register from "./components/Register";
 import Journal from "./components/Journal";
+import Goals from "./components/Goals";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/chat" element={<Chat />} />
         <Route path="/register" element={<Register />} />
         <Route path="/journal" element={<Journal />} />
+        <Route path="/goals" element={<Goals />} />
       </Routes>
     </Router>
   );
