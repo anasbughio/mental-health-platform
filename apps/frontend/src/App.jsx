@@ -3,6 +3,7 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
 import Register from "./components/Register";
+import Journal from "./components/Journal";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/journal" element={<Journal />} />
       </Routes>
     </Router>
   );

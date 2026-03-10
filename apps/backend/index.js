@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 app.use('/api/moods',require('./routes/MoodRoutes'));
 app.use('/api/auth',userRoutes);
 app.use('/api/chat', chatRoutes); 
+app.use('/api/journal', require('./routes/JournalRoutes'));
 connectDB();
 app.listen(PORT, () => {
     console.log(`Server is listening  port ${PORT}`);
