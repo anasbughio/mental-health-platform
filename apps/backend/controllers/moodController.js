@@ -1,39 +1,45 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const Mood = require('../models/MoodLog');
+const Mood = require('../models/MoodLog'); // Adjust the path to your Mood model if needed
 const { analyzeSentiment } = require('./sentimentController');
 
+// Initialize the AI securely using the environment variable your pipeline just injected
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 exports.createMood = async (req, res) => {
     try {
+        // Grab the user's input from the React frontend
         const { moodScore, notes, emotions } = req.body;
         let generatedAdvice = null;
 
+        // Only spend compute power asking the AI if the user actually wrote a note
         if (notes && notes.trim() !== '') {
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+            // We use the fast, lightweight model for quick responses
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-            const prompt = `You are an empathetic, non-judgmental mental health assistant. 
+            // Prompt Engineering: Telling the AI exactly how to behave
+           // 2. Inject that context into the prompt!
+const prompt = `You are an empathetic, non-judgmental mental health assistant. 
 A user just logged their daily mood with a score of ${moodScore} out of 10. 
-${emotions && emotions.length ? `Emotions: ${emotions.join(', ')}.` : ''}
+${emotions}
 They wrote this journal entry: "${notes}"
 
 Provide a short, highly supportive response (maximum 3 sentences). 
 Validate their exact feelings and offer one small, actionable piece of advice or a cognitive reframe.`;
 
+            // Make the actual call to Google's servers
             const result = await model.generateContent(prompt);
             generatedAdvice = result.response.text();
         }
 
+        // Save everything to MongoDB, including the new AI advice!
         const newMood = await Mood.create({
-            user: req.user.id,
+            user: req.user.id, // Assuming your auth middleware puts the user ID here
             moodScore,
             notes,
             emotions,
-            aiAdvice: generatedAdvice
+            aiAdvice: generatedAdvice // Storing the AI's response in the DB
         });
-
-        // ── Run sentiment analysis in background (don't await — never block response) ──
-        if (notes && notes.trim().length > 5) {
+         if (notes && notes.trim().length > 5) {
             analyzeSentiment({
                 userId: req.user.id,
                 text: notes,
@@ -42,20 +48,38 @@ Validate their exact feelings and offer one small, actionable piece of advice or
             }).catch(err => console.error('Background sentiment error (mood):', err.message));
         }
 
-        res.status(201).json({ status: 'success', data: newMood });
+        res.status(201).json({
+            status: 'success',
+            data: newMood
+        });
 
     } catch (error) {
-        console.error('Error in createMood:', error);
-        res.status(500).json({ status: 'error', message: 'Failed to process mood log.' });
+        console.error("Error generating AI content or saving to DB:", error);
+        res.status(500).json({ 
+            status: 'error', 
+            message: 'Failed to process mood log.' 
+        });
     }
 };
 
+
+// 2. Get all Mood Logs for the logged-in user
 exports.getMyMoodLogs = async (req, res) => {
     try {
+        // Find all logs where the 'user' field matches the logged-in user's ID
+        // .sort({ createdAt: -1 }) puts the newest logs at the top
         const logs = await Mood.find({ user: req.user.id }).sort({ createdAt: -1 });
-        res.status(200).json({ status: 'success', results: logs.length, data: logs });
+
+        res.status(200).json({
+            status: 'success',
+            results: logs.length,
+            data: logs
+        });
     } catch (error) {
         console.error('[DEBUG] Error fetching mood logs:', error.message);
-        res.status(500).json({ status: 'error', message: 'Internal server error' });
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal server error'
+        });
     }
 };

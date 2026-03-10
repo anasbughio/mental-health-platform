@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Journal = require('../models/Journal');
 const MoodLog = require('../models/MoodLog');
-
+const { analyzeSentiment } = require('./sentimentController');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // ── GET /api/journal/prompt ──────────────────────────────────────────────────
@@ -82,7 +82,8 @@ Be human, not clinical.`;
             moodAtTime: moodAtTime || null,
             tags: tags || [],
         });
-
+  analyzeSentiment({ userId, text: entry, source: 'journal', sourceId: newEntry._id })
+            .catch(err => console.error('Background sentiment error (journal):', err.message));
         res.status(201).json({ status: 'success', data: newEntry });
 
     } catch (error) {
