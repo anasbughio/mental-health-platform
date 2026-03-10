@@ -20,7 +20,7 @@ export default function Chat() {
                     // Convert DB format to UI format
                     const uiMessages = dbMessages.map(msg => ({
                         text: msg.text,
-                        isUser: msg.role === 'user'
+                        isUser: msg.role === 'patient'
                     }));
                     setMessages([INITIAL_GREETING, ...uiMessages]);
                 }
