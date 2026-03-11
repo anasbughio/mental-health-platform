@@ -225,8 +225,8 @@ export default function Journal() {
 
                             <button
                                 onClick={handleSave}
-                                disabled={isSaving || !entry.trim()}
-                                style={s.saveBtn(isSaving || !entry.trim())}
+                                disabled={isSaving || !entry.trim() || !prompt || isLoadingPrompt}
+                               style={s.saveBtn(isSaving || !entry.trim() || !prompt || isLoadingPrompt)}
                             >
                                 {isSaving ? '✨ Saving & Reflecting…' : '💾 Save & Get AI Reflection'}
                             </button>

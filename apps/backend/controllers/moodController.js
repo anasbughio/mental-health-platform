@@ -40,12 +40,10 @@ Validate their exact feelings and offer one small, actionable piece of advice or
             aiAdvice: generatedAdvice // Storing the AI's response in the DB
         });
          if (notes && notes.trim().length > 5) {
-            analyzeSentiment({
-                userId: req.user.id,
-                text: notes,
-                source: 'mood',
-                sourceId: newMood._id,
-            }).catch(err => console.error('Background sentiment error (mood):', err.message));
+          setTimeout(() => {
+    analyzeSentiment({ userId, text: notes, source: 'mood', sourceId: newMood._id })
+        .catch(err => console.error(err));
+}, 5000);
         }
 
         res.status(201).json({

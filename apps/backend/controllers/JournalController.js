@@ -82,8 +82,10 @@ Be human, not clinical.`;
             moodAtTime: moodAtTime || null,
             tags: tags || [],
         });
-  analyzeSentiment({ userId, text: entry, source: 'journal', sourceId: newEntry._id })
-            .catch(err => console.error('Background sentiment error (journal):', err.message));
+  setTimeout(() => {
+    analyzeSentiment({ userId, text: entry, source: 'journal', sourceId: newEntry._id })
+        .catch(err => console.error(err));
+}, 5000);
         res.status(201).json({ status: 'success', data: newEntry });
 
     } catch (error) {
