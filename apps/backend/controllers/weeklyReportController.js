@@ -105,7 +105,7 @@ exports.generateReport = async (req, res) => {
         }
 
         // ── Generate AI report via single Gemini call ─────────────────────────
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         const aiPrompt = `You are a compassionate mental health analyst writing a weekly wellness report for a user.
 
