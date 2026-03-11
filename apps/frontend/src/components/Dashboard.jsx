@@ -352,6 +352,11 @@ export default function Dashboard() {
                     <Link to="/journal" style={styles.journalLink}>📔 Journal →</Link>
                     <Link to="/goals">🎯 Goals →</Link>
                     <Link to="/weekly-report">🎯 Weekly Report →</Link>
+                    <Link to="/exercises">🧘 Exercises →</Link>
+                    <Link to="/notifications">🔔 Notifications →</Link>
+                    <Link to="/sleep">🌙 Sleep Tracker →</Link>
+                    <Link to="/analytics">📈 Analytics →</Link>
+
                     <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
                 </div>
             </div>

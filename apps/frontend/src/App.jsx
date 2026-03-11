@@ -8,6 +8,10 @@ import Goals from "./components/Goals";
 import CrisisResources from "./components/Crisisresorces";
 import SentimentInsights from "./components/Sentimentinsights";
 import WeeklyReport from "./components/WeeklyReport";
+import GuidedExercises from "./components/GuidedExercises";
+import Notifications from "./components/Notifications";
+import SleepTracker from "./components/SleepTracker";
+import Analytics from "./components/Analytics";
 
 
 function App() {
@@ -24,6 +28,11 @@ function App() {
         <Route path="/crisis" element={<CrisisResources />} />
         <Route path="/sentiment" element={<SentimentInsights />} />
         <Route path="/weekly-report" element={<WeeklyReport />} />
+        <Route path="/exercises" element={<GuidedExercises />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="/sleep" element={<SleepTracker />} />
+        <Route path="/analytics" element={<Analytics />} />
+        
       </Routes>
     </Router>
   );
