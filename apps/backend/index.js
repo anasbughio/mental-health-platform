@@ -27,6 +27,7 @@ app.use('/api/journal', require('./routes/JournalRoutes'));
 app.use('/api/goals', require('./routes/GoalRoutes'));
 app.use('/api/crisis', require('./routes/CrisisRoutes'));
 app.use('/api/sentiment', require('./routes/SentimentRoutes'));
+app.use('/api/weekly-report', require('./routes/WeeklyReportRoutes'));
 connectDB();
 app.listen(PORT, () => {
     console.log(`Server is listening  port ${PORT}`);

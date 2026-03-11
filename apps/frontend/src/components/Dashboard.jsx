@@ -351,6 +351,7 @@ export default function Dashboard() {
                     <Link to="/chat" style={styles.chatLink}>Talk to AI →</Link>
                     <Link to="/journal" style={styles.journalLink}>📔 Journal →</Link>
                     <Link to="/goals">🎯 Goals →</Link>
+                    <Link to="/weekly-report">🎯 Weekly Report →</Link>
                     <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
                 </div>
             </div>

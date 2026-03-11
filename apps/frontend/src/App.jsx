@@ -7,6 +7,7 @@ import Journal from "./components/Journal";
 import Goals from "./components/Goals";
 import CrisisResources from "./components/Crisisresorces";
 import SentimentInsights from "./components/Sentimentinsights";
+import WeeklyReport from "./components/WeeklyReport";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/goals" element={<Goals />} />
         <Route path="/crisis" element={<CrisisResources />} />
         <Route path="/sentiment" element={<SentimentInsights />} />
+        <Route path="/weekly-report" element={<WeeklyReport />} />
       </Routes>
     </Router>
   );
