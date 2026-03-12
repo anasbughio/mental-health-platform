@@ -46,6 +46,9 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_EMAIL: ${{ secrets.VAPID_EMAIL }}
         run: |
           # 1. Find the newest running EC2 instance
           INSTANCE_ID=$(aws ec2 describe-instances \
@@ -64,6 +67,9 @@ jobs:
           -e JWT_SECRET=\"$JWT_SECRET\" \
           -e JWT_REFRESH_SECRET=\"$JWT_REFRESH_SECRET\" \
           -e GEMINI_API_KEY=\"$GEMINI_API_KEY\" \
+          -e VAPID_PUBLIC_KEY=\"$VAPID_PUBLIC_KEY\" \
+          -e VAPID_PRIVATE_KEY=\"$VAPID_PRIVATE_KEY\" \
+          -e VAPID_EMAIL=\"$VAPID_EMAIL\" \
           $ECR_REGISTRY/$ECR_REPOSITORY:latest"
 
           # 3. Convert command to JSON payload for SSM
