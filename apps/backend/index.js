@@ -14,9 +14,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-  origin: ["https://d1b25710g4zbqm.cloudfront.net" ,  "http://localhost:5173"],// frontend URL during development
-  credentials: true // <-- important to allow cookies
+  origin: ["https://d1b25710g4zbqm.cloudfront.net", "http://localhost:5173"],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.options('*', cors()); // ← ADD THIS — handles preflight requests
 // Root route
 app.get('/', (req, res) => {
     res.send('Mental Health Platform API is running. Access /api/health for status.');
