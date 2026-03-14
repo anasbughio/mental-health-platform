@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "s3_policy" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.cdn.arn]
+      values   = [aws_cloudfront_origin_access_control.oac.arn]
     }
   }
 }
