@@ -12,11 +12,14 @@ import GuidedExercises from "./components/GuidedExercises";
 import Notifications from "./components/Notifications";
 import SleepTracker from "./components/SleepTracker";
 import Analytics from "./components/Analytics";
+import Navbar from "./components/Navbar";
 
 
 function App() {
   return (
     <Router>
+        <Navbar /> 
+          <div style={{ width: '100%', minHeight: '100vh' }}>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
@@ -34,6 +37,7 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         
       </Routes>
+      </div>
     </Router>
   );
 }

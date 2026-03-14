@@ -41,7 +41,7 @@ Validate their exact feelings and offer one small, actionable piece of advice or
         });
          if (notes && notes.trim().length > 5) {
           setTimeout(() => {
-    analyzeSentiment({ userId, text: notes, source: 'mood', sourceId: newMood._id })
+    analyzeSentiment({ user_Id, text: notes, source: 'mood', sourceId: newMood._id })
         .catch(err => console.error(err));
 }, 5000);
         }
