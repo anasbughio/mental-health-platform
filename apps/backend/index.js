@@ -42,5 +42,5 @@ cron.schedule('* * * * *', () => {
 
 connectDB();
 app.listen(PORT, () => {
-    console.log(`Server is listening  port ${PORT}`);
+    console.log(`Server is listening   port ${PORT}`);
 });
