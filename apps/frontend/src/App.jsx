@@ -13,6 +13,7 @@ import Notifications from "./components/Notifications";
 import SleepTracker from "./components/SleepTracker";
 import Analytics from "./components/Analytics";
 import Navbar from "./components/Navbar";
+import Landing from "./components/Landing";
 
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
         <Navbar /> 
           <div style={{ width: '100%', minHeight: '100vh' }}>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} />

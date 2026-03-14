@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import api from '../config/axios';
 
 const NAV_ITEMS = [
-    { to: '/dashboard',     icon: '😊', label: 'Mood'       },
+    { to: '/dashboard',     icon: '😊', label: 'Dashboard'  },
     { to: '/journal',       icon: '📝', label: 'Journal'    },
     { to: '/sleep',         icon: '🌙', label: 'Sleep'      },
     { to: '/exercises',     icon: '🧘', label: 'Exercises'  },
@@ -12,269 +12,199 @@ const NAV_ITEMS = [
     { to: '/analytics',     icon: '📈', label: 'Analytics'  },
     { to: '/weekly-report', icon: '📊', label: 'Report'     },
     { to: '/sentiment',     icon: '🧬', label: 'Insights'   },
+    { to: '/notifications', icon: '🔔', label: 'Reminders'  },
     { to: '/crisis',        icon: '🆘', label: 'Help'       },
+];
+
+const MOBILE_TABS = [
+    { to: '/dashboard',  icon: '😊', label: 'Home'     },
+    { to: '/journal',    icon: '📝', label: 'Journal'  },
+    { to: '/chat',       icon: '💬', label: 'Chat'     },
+    { to: '/analytics',  icon: '📈', label: 'Stats'    },
+    { to: '/crisis',     icon: '🆘', label: 'Help'     },
 ];
 
 export default function Navbar() {
     const [isOpen, setIsOpen]     = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [user, setUser]         = useState(null);
-    const location  = useLocation();
-    const navigate  = useNavigate();
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    // Hide navbar on auth pages
-    const hideOn = ['/login', '/register'];
+  const hideOn = ['/', '/login', '/register'];
     if (hideOn.includes(location.pathname)) return null;
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 10);
-        window.addEventListener('scroll', onScroll);
-        return () => window.removeEventListener('scroll', onScroll);
+        const fn = () => setScrolled(window.scrollY > 8);
+        window.addEventListener('scroll', fn);
+        return () => window.removeEventListener('scroll', fn);
     }, []);
 
     useEffect(() => {
-        api.get('/auth/me')
-            .then(res => setUser(res.data.data))
-            .catch(() => {});
+        api.get('/auth/me').then(r => setUser(r.data.data)).catch(() => {});
     }, []);
 
-    // Close menu on route change
     useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
     const handleLogout = async () => {
         try { await api.post('/auth/logout'); } catch {}
-        navigate('/login');
+        window.location.href = '/';
     };
 
     const initials = user?.name
         ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
         : '?';
 
+    const act = (to) => location.pathname === to;
+
     return (
         <>
-            {/* ── Top Bar ── */}
-            <nav style={s.nav(scrolled)}>
-                <div style={s.inner}>
+        <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
-                    {/* Logo */}
-                    <Link to="/dashboard" style={s.logo}>
-                        <span style={s.logoIcon}>🧠</span>
-                        <span style={s.logoText}>MindSpace</span>
-                    </Link>
+            .nb { position:fixed; top:0; left:0; right:0; z-index:100; height:60px; font-family:'DM Sans',sans-serif; transition:all 0.25s; }
+            .nb-inner { max-width:1280px; margin:0 auto; padding:0 24px; height:100%; display:flex; align-items:center; justify-content:space-between; }
 
-                    {/* Desktop links */}
-                    <div style={s.desktopLinks}>
-                        {NAV_ITEMS.filter(i => i.to !== '/crisis').map(item => (
-                            <Link
-                                key={item.to}
-                                to={item.to}
-                                style={s.navLink(location.pathname === item.to)}
-                            >
-                                <span style={{ fontSize: 14 }}>{item.icon}</span>
-                                {item.label}
-                                {location.pathname === item.to && <span style={s.activeDot} />}
-                            </Link>
-                        ))}
-                    </div>
+            /* logo */
+            .nb-logo { display:flex; align-items:center; gap:9px; text-decoration:none; flex-shrink:0; }
+            .nb-logo-box { width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
+            .nb-logo-text { font-family:'Bricolage Grotesque',sans-serif; font-size:17px; font-weight:800; color:#111827; letter-spacing:-0.4px; }
 
-                    {/* Right side */}
-                    <div style={s.rightSide}>
-                        {/* Crisis button — always visible */}
-                        <Link to="/crisis" style={s.crisisBtn}>
-                            🆘 <span style={{ display: 'none' }}>Help</span>
+            /* desktop links */
+            .nb-links { display:flex; align-items:center; gap:1px; flex:1; justify-content:center; padding:0 16px; overflow:hidden; }
+            .nb-link { display:flex; align-items:center; gap:5px; padding:6px 10px; border-radius:9px; text-decoration:none; font-size:13px; font-weight:500; color:#6b7280; white-space:nowrap; transition:all 0.15s; }
+            .nb-link:hover { background:#f5f5f5; color:#374151; }
+            .nb-link.on { background:#ede9fe; color:#6366f1; font-weight:700; }
+            .nb-link-i { font-size:13px; }
+
+            /* right */
+            .nb-r { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+            .nb-crisis { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:20px; text-decoration:none; font-size:12px; font-weight:700; transition:all 0.15s; }
+            .nb-crisis:hover { background:#fee2e2; box-shadow:0 2px 8px rgba(220,38,38,0.15); }
+            .nb-ib { width:35px; height:35px; border-radius:10px; background:#f9fafb; border:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:16px; transition:all 0.15s; cursor:pointer; color:inherit; }
+            .nb-ib:hover { background:#f3f4f6; }
+            .nb-av { width:35px; height:35px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#7c3aed); color:white; border:none; cursor:pointer; font-size:12px; font-weight:800; font-family:'DM Sans',sans-serif; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(99,102,241,0.35); transition:all 0.15s; }
+            .nb-av:hover { transform:scale(1.06); box-shadow:0 4px 12px rgba(99,102,241,0.45); }
+
+            /* dropdown */
+            .nb-dd { position:absolute; top:46px; right:0; z-index:200; background:white; border:1px solid #e5e7eb; border-radius:18px; padding:6px 0; min-width:230px; box-shadow:0 12px 40px rgba(0,0,0,0.12); animation:ddIn 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+            @keyframes ddIn { from{opacity:0;transform:scale(0.95) translateY(-8px);} to{opacity:1;transform:scale(1) translateY(0);} }
+            .nb-dd-head { padding:12px 16px 10px; }
+            .nb-dd-name  { font-size:14px; font-weight:700; color:#111827; margin:0 0 2px; }
+            .nb-dd-email { font-size:12px; color:#9ca3af; margin:0; }
+            .nb-dd-sep   { height:1px; background:#f3f4f6; margin:4px 0; }
+            .nb-dd-sec   { padding:4px 8px; }
+            .nb-dd-lbl   { font-size:10px; font-weight:700; color:#9ca3af; letter-spacing:0.08em; text-transform:uppercase; padding:4px 8px 2px; display:block; }
+            .nb-dd-item  { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px; text-decoration:none; font-size:13px; font-weight:400; color:#374151; transition:all 0.12s; cursor:pointer; width:100%; background:none; border:none; font-family:'DM Sans',sans-serif; text-align:left; }
+            .nb-dd-item:hover { background:#f5f5f5; }
+            .nb-dd-item.on { background:#ede9fe; color:#6366f1; font-weight:600; }
+            .nb-dd-item.red { color:#dc2626; }
+            .nb-dd-item.red:hover { background:#fef2f2; }
+            .nb-dd-ii { font-size:15px; width:20px; text-align:center; flex-shrink:0; }
+
+            /* mobile bar */
+            .nb-mob { position:fixed; bottom:0; left:0; right:0; z-index:100; background:rgba(255,255,255,0.96); backdrop-filter:blur(14px); border-top:1px solid #f3f4f6; display:flex; align-items:center; box-shadow:0 -4px 20px rgba(0,0,0,0.07); padding-bottom:env(safe-area-inset-bottom); }
+            .nb-mt { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:8px 4px 6px; text-decoration:none; position:relative; color:#9ca3af; transition:color 0.15s; }
+            .nb-mt.on { color:#6366f1; }
+            .nb-mt-bar { position:absolute; top:0; left:20%; right:20%; height:2.5px; border-radius:0 0 3px 3px; background:#6366f1; animation:barIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+            @keyframes barIn { from{transform:scaleX(0);} to{transform:scaleX(1);} }
+            .nb-mt-i { font-size:20px; line-height:1; }
+            .nb-mt-l { font-size:9px; font-weight:600; font-family:'DM Sans',sans-serif; letter-spacing:0.03em; }
+
+            @media(max-width:960px) { .nb-links { display:none; } }
+            @media(min-width:961px) { .nb-mob { display:none; } }
+        `}</style>
+
+        {/* ── Top bar ── */}
+        <nav className="nb" style={{
+            background: scrolled ? 'rgba(255,255,255,0.92)' : 'white',
+            backdropFilter: scrolled ? 'blur(14px)' : 'none',
+            borderBottom: '1px solid #f3f4f6',
+            boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.06)' : 'none',
+        }}>
+            <div className="nb-inner">
+                {/* Logo */}
+                <Link to="/dashboard" className="nb-logo">
+                    <div className="nb-logo-box">🌿</div>
+                    <span className="nb-logo-text">Serenity AI</span>
+                </Link>
+
+                {/* Desktop links */}
+                <div className="nb-links">
+                    {NAV_ITEMS.filter(i => i.to !== '/crisis' && i.to !== '/notifications').map(item => (
+                        <Link key={item.to} to={item.to} className={`nb-link ${act(item.to) ? 'on' : ''}`}>
+                            <span className="nb-link-i">{item.icon}</span>
+                            {item.label}
                         </Link>
+                    ))}
+                </div>
 
-                        {/* Notifications */}
-                        <Link to="/notifications" style={s.iconBtn} title="Reminders">
-                            🔔
-                        </Link>
+                {/* Right */}
+                <div className="nb-r">
+                    <Link to="/crisis" className="nb-crisis">🆘 Help</Link>
+                    <Link to="/notifications" className="nb-ib" title="Reminders">🔔</Link>
 
-                        {/* Avatar / user menu */}
-                        <div style={{ position: 'relative' }}>
-                            <button
-                                onClick={() => setIsOpen(o => !o)}
-                                style={s.avatar}
-                                title={user?.name || 'Menu'}
-                            >
-                                {initials}
-                            </button>
+                    <div style={{ position: 'relative' }}>
+                        <button className="nb-av" onClick={() => setIsOpen(o => !o)} title={user?.name || 'Menu'}>
+                            {initials}
+                        </button>
 
-                            {/* Dropdown */}
-                            {isOpen && (
-                                <div style={s.dropdown}>
-                                    {user && (
-                                        <div style={s.dropdownHeader}>
-                                            <p style={s.dropdownName}>{user.name}</p>
-                                            <p style={s.dropdownEmail}>{user.email}</p>
-                                        </div>
-                                    )}
-                                    <div style={s.dropdownDivider} />
-                                    {NAV_ITEMS.map(item => (
-                                        <Link key={item.to} to={item.to} style={s.dropdownItem(location.pathname === item.to)}>
-                                            <span>{item.icon}</span>
-                                            {item.label}
+                        {isOpen && (
+                            <div className="nb-dd">
+                                {user && (
+                                    <div className="nb-dd-head">
+                                        <p className="nb-dd-name">{user.name}</p>
+                                        <p className="nb-dd-email">{user.email}</p>
+                                    </div>
+                                )}
+                                <div className="nb-dd-sep" />
+
+                                <div className="nb-dd-sec">
+                                    <span className="nb-dd-lbl">Pages</span>
+                                    {NAV_ITEMS.slice(0, 6).map(item => (
+                                        <Link key={item.to} to={item.to} className={`nb-dd-item ${act(item.to) ? 'on' : ''}`}>
+                                            <span className="nb-dd-ii">{item.icon}</span>{item.label}
                                         </Link>
                                     ))}
-                                    <div style={s.dropdownDivider} />
-                                    <Link to="/notifications" style={s.dropdownItem(false)}>
-                                        <span>🔔</span> Reminders
-                                    </Link>
-                                    <button onClick={handleLogout} style={s.logoutBtn}>
-                                        <span>👋</span> Log Out
+                                </div>
+                                <div className="nb-dd-sep" />
+                                <div className="nb-dd-sec">
+                                    <span className="nb-dd-lbl">More</span>
+                                    {NAV_ITEMS.slice(6).map(item => (
+                                        <Link key={item.to} to={item.to} className={`nb-dd-item ${act(item.to) ? 'on' : ''}`}>
+                                            <span className="nb-dd-ii">{item.icon}</span>{item.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                                <div className="nb-dd-sep" />
+                                <div className="nb-dd-sec">
+                                    <button onClick={handleLogout} className="nb-dd-item red">
+                                        <span className="nb-dd-ii">👋</span> Log Out
                                     </button>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
-            </nav>
-
-            {/* ── Mobile Bottom Tab Bar ── */}
-            <div style={s.mobileBar}>
-                {[
-                    { to: '/dashboard',  icon: '😊', label: 'Mood'      },
-                    { to: '/journal',    icon: '📝', label: 'Journal'   },
-                    { to: '/chat',       icon: '💬', label: 'Chat'      },
-                    { to: '/analytics',  icon: '📈', label: 'Stats'     },
-                    { to: '/crisis',     icon: '🆘', label: 'Help'      },
-                ].map(item => {
-                    const active = location.pathname === item.to;
-                    return (
-                        <Link key={item.to} to={item.to} style={s.mobileTab(active)}>
-                            <span style={{ fontSize: 20 }}>{item.icon}</span>
-                            <span style={s.mobileTabLabel(active)}>{item.label}</span>
-                            {active && <span style={s.mobileActiveDot} />}
-                        </Link>
-                    );
-                })}
             </div>
+        </nav>
 
-            {/* Overlay to close dropdown */}
-            {isOpen && (
-                <div onClick={() => setIsOpen(false)}
-                    style={{ position: 'fixed', inset: 0, zIndex: 90 }} />
-            )}
+        {/* ── Mobile bottom bar ── */}
+        <div className="nb-mob">
+            {MOBILE_TABS.map(item => {
+                const active = act(item.to);
+                return (
+                    <Link key={item.to} to={item.to} className={`nb-mt ${active ? 'on' : ''}`}>
+                        {active && <div className="nb-mt-bar" />}
+                        <span className="nb-mt-i">{item.icon}</span>
+                        <span className="nb-mt-l">{item.label}</span>
+                    </Link>
+                );
+            })}
+        </div>
 
-            {/* Spacer so content doesn't hide under navbar */}
-            <div style={{ height: 64 }} />
+        {isOpen && <div onClick={() => setIsOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 90 }} />}
+        <div style={{ height: 60 }} />
         </>
     );
 }
-
-// ── Styles ────────────────────────────────────────────────────────────────────
-const s = {
-    nav: (scrolled) => ({
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: scrolled ? 'rgba(255,255,255,0.95)' : 'white',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: '1px solid #f3f4f6',
-        boxShadow: scrolled ? '0 2px 12px rgba(0,0,0,0.07)' : 'none',
-        transition: 'all 0.2s',
-        height: 64,
-    }),
-    inner: {
-        maxWidth: 1200, margin: '0 auto', padding: '0 20px',
-        height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    },
-    logo: {
-        display: 'flex', alignItems: 'center', gap: 8,
-        textDecoration: 'none', flexShrink: 0,
-    },
-    logoIcon: { fontSize: 24 },
-    logoText: {
-        fontSize: 18, fontWeight: 800, color: '#111827',
-        fontFamily: "'Segoe UI', sans-serif", letterSpacing: '-0.5px',
-    },
-    desktopLinks: {
-        display: 'flex', alignItems: 'center', gap: 2,
-        // Hide on mobile — show only on md+
-        '@media (max-width: 768px)': { display: 'none' },
-        overflow: 'hidden',
-        // Use inline media query workaround via className in real use,
-        // but for portability we hide via the mobileBar showing instead
-    },
-    navLink: (active) => ({
-        display: 'flex', alignItems: 'center', gap: 5, position: 'relative',
-        padding: '6px 10px', borderRadius: 8, textDecoration: 'none',
-        fontSize: 13, fontWeight: active ? 700 : 500,
-        color: active ? '#6366f1' : '#6b7280',
-        backgroundColor: active ? '#f0f4ff' : 'transparent',
-        transition: 'all 0.15s', whiteSpace: 'nowrap',
-        fontFamily: "'Segoe UI', sans-serif",
-    }),
-    activeDot: {
-        position: 'absolute', bottom: 2, left: '50%', transform: 'translateX(-50%)',
-        width: 4, height: 4, borderRadius: '50%', backgroundColor: '#6366f1',
-    },
-    rightSide: { display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 },
-    crisisBtn: {
-        display: 'flex', alignItems: 'center', gap: 5,
-        padding: '6px 12px', borderRadius: 8,
-        backgroundColor: '#fef2f2', color: '#dc2626',
-        textDecoration: 'none', fontSize: 13, fontWeight: 700,
-        border: '1px solid #fecaca', transition: 'all 0.15s',
-        fontFamily: "'Segoe UI', sans-serif",
-    },
-    iconBtn: {
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: 36, height: 36, borderRadius: 8,
-        backgroundColor: '#f9fafb', border: '1px solid #f3f4f6',
-        textDecoration: 'none', fontSize: 16, transition: 'all 0.15s',
-    },
-    avatar: {
-        width: 36, height: 36, borderRadius: '50%',
-        backgroundColor: '#6366f1', color: 'white',
-        border: 'none', cursor: 'pointer',
-        fontSize: 13, fontWeight: 800, fontFamily: "'Segoe UI', sans-serif",
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 2px 6px rgba(99,102,241,0.35)',
-    },
-    dropdown: {
-        position: 'absolute', top: 44, right: 0, zIndex: 200,
-        backgroundColor: 'white', border: '1px solid #e5e7eb',
-        borderRadius: 14, padding: '8px 0', minWidth: 220,
-        boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-        fontFamily: "'Segoe UI', sans-serif",
-    },
-    dropdownHeader: { padding: '10px 16px 6px' },
-    dropdownName: { margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: '#111827' },
-    dropdownEmail: { margin: 0, fontSize: 12, color: '#9ca3af' },
-    dropdownDivider: { height: 1, backgroundColor: '#f3f4f6', margin: '6px 0' },
-    dropdownItem: (active) => ({
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: '8px 16px', textDecoration: 'none',
-        fontSize: 13, fontWeight: active ? 700 : 400,
-        color: active ? '#6366f1' : '#374151',
-        backgroundColor: active ? '#f0f4ff' : 'transparent',
-        transition: 'background 0.1s',
-    }),
-    logoutBtn: {
-        display: 'flex', alignItems: 'center', gap: 10, width: '100%',
-        padding: '8px 16px', background: 'none', border: 'none',
-        fontSize: 13, color: '#dc2626', cursor: 'pointer',
-        fontFamily: "'Segoe UI', sans-serif", textAlign: 'left',
-    },
-
-    // ── Mobile bottom bar ──
-    mobileBar: {
-        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: 'white', borderTop: '1px solid #f3f4f6',
-        display: 'flex', alignItems: 'center',
-        boxShadow: '0 -2px 12px rgba(0,0,0,0.07)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
-    },
-    mobileTab: (active) => ({
-        flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-        justifyContent: 'center', gap: 2, padding: '8px 4px 6px',
-        textDecoration: 'none', position: 'relative',
-        color: active ? '#6366f1' : '#9ca3af', transition: 'color 0.15s',
-    }),
-    mobileTabLabel: (active) => ({
-        fontSize: 10, fontWeight: active ? 700 : 400,
-        fontFamily: "'Segoe UI', sans-serif",
-    }),
-    mobileActiveDot: {
-        position: 'absolute', top: 4,
-        width: 4, height: 4, borderRadius: '50%', backgroundColor: '#6366f1',
-    },
-};
