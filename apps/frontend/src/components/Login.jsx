@@ -170,7 +170,7 @@ export default function Login() {
                     <div className="lg-field">
                         <div className="lg-field-head">
                             <label className="lg-label" style={{fontSize:13,fontWeight:600,color:'#374151'}}>Password</label>
-                            <button type="button" className="lg-forgot" style={{fontSize:13,fontWeight:600,color:'#5046e5'}}>Forgot?</button>
+                          
                         </div>
                         <input
                             type="password" className="lg-input"
