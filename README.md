@@ -4,14 +4,6 @@
 
 ---
 
-## 📸 Screenshots
-
-| Landing | Dashboard | Chat |
-|--------|-----------|------|
-| ![Landing](https://via.placeholder.com/250x150/f5f4f0/6366f1?text=Landing) | ![Dashboard](https://via.placeholder.com/250x150/f5f4f0/6366f1?text=Dashboard) | ![Chat](https://via.placeholder.com/250x150/f5f4f0/6366f1?text=Chat) |
-
----
-
 ## ✨ Features
 
 - **🤖 AI Chat Companion** — 24/7 emotional support powered by Google Gemini AI
@@ -361,22 +353,6 @@ POST   /api/crisis/detect
 3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
----
-
-## ⚠️ Disclaimer
-
-Serenity AI is a wellness platform and is **not** a substitute for professional mental health care, therapy, or emergency medical treatment. In a mental health emergency, please contact your local emergency services or a crisis hotline immediately.
-
-**Crisis Hotlines:**
-- 🇺🇸 USA: Call or text **988**
-- 🌍 Global: [befrienders.org](https://befrienders.org)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
